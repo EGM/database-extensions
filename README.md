@@ -8,9 +8,8 @@ versions
 
 * Modified the `ExecuteSql' function to return a Promise if no arguments are passed as callbacks for success and failure.
 
-Example:
+### From
 ```javascript
-//From:
     var s = "";  
     var len = results.rows.length;  
     for(var i = 0; i < len; i++ )   
@@ -19,8 +18,9 @@ Example:
         s += item.id + ", " + item.data + ", " + item.data_num + "\n";   
     }  
     txt.SetText( s );  
-
-//To:
+```
+### To
+```javascript
       var s = "";
       for (var item of res) {
         s += item.id + ", " + item.data + ", " + item.data_num + "\n";
