@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>MonkeyTools</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <style type="text/css">
+        </style>
+</head>
+
+<body>
+
+<div data-role="page" data-theme="a">
+
+	<div data-role="header" data-position="fixed">
+		<a href='#' class='ui-btn-left' data-icon='arrow-l' data-theme="c" onclick="history.back(); return false">Back</a>
+		<h1>MonkeyTools</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">
+
+		<p> Todo: Documentation for MonkeyTools</p>
+
+		<p>In order to use MonkeyTools, you must first load the plugin at the top of your script
+		using the <b>LoadPlugin</b> method like this:</p>
+
+		<div class="samp">&nbsp;app.LoadPlugin( "MonkeyTools" );</div>
+
+		<!-- <p>Then you can create an instance of the plugin object when you need it like this:</p>-->
+
+<h2>Extensions to '<code>OpenDatabase</code>'</h2>
+<p>OpenDatabase creates or opens a specified database.</p>
+
+			<div class="samp">app.OpenDatabase( <a href="#pop_std_str" data-transition="pop" data-rel="popup">name</a> )</div>
+
+
+			<br>
+
+
+		<div data-role="popup" id="pop_std_str" class="ui-content"><b>string</b></div>
+
+      <p>Iterators</p>
+      <p></p>
+
+		<!--<div class="samp">&nbsp;plg = app.CreateMyPlugin();</div>-->
+
+		<br>
+		<p>Examples:</p>
+
+		<div data-role="collapsible" data-collapsed="true"  data-mini="true" data-theme="a" data-content-theme="b">
+			<h3>Example - Database without Iterator</h3>
+			<div id="examp1" style="font-size:70%; white-space:pre-wrap">
+app.LoadPlugin( "MonkeyTools" );
+
+//Called when application is started.
+function OnStart()
+{
+    //Create a layout with objects vertically centered.
+    lay = app.CreateLayout( "linear", "VCenter,FillXY" );
+
+    //Create an 'Add' button.
+    btnAdd = app.CreateButton( "Add to Database", 0.6, 0.1 );
+    btnAdd.SetOnTouch( btnAdd_OnTouch );
+    lay.AddChild( btnAdd );
+
+    //Create a 'Remove' button.
+    btnRemove = app.CreateButton( "Remove from Database", 0.6, 0.1 );
+    btnRemove.SetOnTouch( btnRemove_OnTouch );
+    lay.AddChild( btnRemove );
+
+    //Create a 'Delete' button.
+    btnDelete = app.CreateButton( "Delete Database", 0.6, 0.1 );
+    btnDelete.SetOnTouch( btnDelete_OnTouch );
+    lay.AddChild( btnDelete );
+
+    //Create text box to show results.
+    txt = app.CreateText( "", 0.9, 0.4, "multiline" );
+    txt.SetMargins( 0,0.1,0,0 );
+    txt.SetBackColor( "#ff222222" );
+    txt.SetTextSize( 18 );
+    lay.AddChild( txt );
+
+    //Add layout to app.
+    app.AddLayout( lay );
+
+    //Create or open a database called "MyData".
+    db = app.OpenDatabase( "MyData" );
+
+    //Create a table (if it does not exist already).
+    db.ExecuteSql( "CREATE TABLE IF NOT EXISTS test_table " +
+        "(id integer primary key, data text, data_num integer)" );
+
+    //Get all the table rows.
+    DisplayAllRows();
+}
+
+//Called when user touches our 'Add' button.
+function btnAdd_OnTouch()
+{
+    //Add some data (with error handler).
+    db.ExecuteSql( "INSERT INTO test_table (data, data_num)" +
+        " VALUES (?,?)", ["test", 100], null, OnError );
+
+    //Get all the table rows.
+    DisplayAllRows();
+}
+
+//Called when user touches our 'Remove' button.
+function btnRemove_OnTouch()
+{
+    //Remove data.
+    db.ExecuteSql( "DELETE FROM test_table WHERE id > 3" );
+
+    //Get all the table rows.
+    DisplayAllRows();
+}
+
+//Called when user touches our 'Delete' button.
+function btnDelete_OnTouch()
+{
+   //Delete this database.
+   db.Delete();
+
+   //Get all the table rows.
+   DisplayAllRows();
+}
+
+//function to display all records
+function DisplayAllRows()
+{
+    txt.SetText("");
+
+    //Get all the table rows.
+    db.ExecuteSql( "select * from test_table;", [], OnResult );
+}
+
+//Callback to show query results in debug.
+function OnResult( results )
+{
+<b id="snip1" style="font-size:100%">
+    var s = "";
+    for(var item of results)
+    {
+        s += item.id + ", " + item.data + ", " + item.data_num + "\n";
+    }
+    txt.SetText( s );
+</b>
+}
+
+//Callback to show errors.
+function OnError( msg )
+{
+    app.Alert( "Error: " + msg );
+    console.log( "Error: " + msg );
+}
+
+			</div>
+			<div name="divCopy" align="right">
+			<a href="#" data-role="button" data-mini="true" data-inline="true" onclick="copy(snip1)">&nbsp;&nbsp;Copy&nbsp;&nbsp;</a>
+			<a href="#" data-role="button" data-mini="true" data-inline="true" onclick="copy(examp1)">Copy All</a>
+			<a href="#" data-role="button" data-mini="true" data-inline="true" onclick="demo(examp1)">&nbsp;&nbsp;&nbsp;Run&nbsp;&nbsp;&nbsp;</a>
+			</div>
+		</div>
+
+
+		<div data-role="collapsible" data-collapsed="true"  data-mini="true" data-theme="a" data-content-theme="b">
+			<h3>Example - Test Callback</h3>
+			<div id="examp2" style="font-size:70%">
+				app.LoadPlugin( "MyPlugin" );<br>
+				<br>
+				function OnStart()<br>
+				{<br>
+				 &nbsp;&nbsp;lay = app.CreateLayout( "Linear", "VCenter,FillXY" );<br><br>
+				 &nbsp;&nbsp;btn = app.CreateButton( "Press Me" );<br>
+				 &nbsp;&nbsp;btn.SetOnTouch( CallPlugin );<br>
+				 &nbsp;&nbsp;lay.AddChild( btn );<br><br>
+				 <b id="snip2"  style="font-size:100%">
+				 &nbsp;&nbsp;plg = app.CreateMyPlugin();<br>
+				 &nbsp;&nbsp;plg.SetOnMyReply( OnMyReply );<br>
+				 </b><br>
+				 &nbsp;&nbsp;app.AddLayout( lay );<br>
+				}<br>
+				<br>
+				function CallPlugin()<br>
+				{<br>
+				&nbsp;&nbsp;plg.MyFunc( "hello", 21, true );<br>
+				}<br><br>
+				function OnMyReply( txt, num, bool )<br>
+				{<br>
+				&nbsp;&nbsp;alert( "txt=" + txt + " num=" + num + " bool=" + bool );<br>
+				}<br>
+			</div>
+			<div name="divCopy" align="right">
+			<a href="#" data-role="button" data-mini="true" data-inline="true" onclick="copy(snip2)">&nbsp;&nbsp;Copy&nbsp;&nbsp;</a>
+			<a href="#" data-role="button" data-mini="true" data-inline="true" onclick="copy(examp2)">Copy All</a>
+			<a href="#" data-role="button" data-mini="true" data-inline="true" onclick="demo(examp2)">&nbsp;&nbsp;&nbsp;Run&nbsp;&nbsp;&nbsp;</a>
+			</div>
+		</div>
+
+	</div><!-- /content -->
+
+</div><!-- /page -->
+
+</body>
+</html>
